@@ -1,8 +1,6 @@
 # ActiveSwitch
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/active_switch`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+ActiveSwitch stores last seen at timestamps in Redis so you can detect if cron style jobs are running at an expected interval.
 
 ## Installation
 
@@ -22,7 +20,75 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First, configure `ActiveSwitch`, for instance in a Rails initializer:
+
+```ruby
+# config/initializers/active_switch.rb
+
+# configure the Redis client
+ActiveSwitch.redis = Redis.new
+
+# expect the big batch job to run within past day
+ActiveSwitch.register(:big_batch_job, 1.day)
+
+# expect the weekly mailer to run within the past week
+ActiveSwitch.register(:weekly_mailer, 1.week)
+```
+
+Attempting to register the same name more than once will raise an `ActiveSwitch::AlreadyRegistered` exception.
+
+Then after your scheduled task or background job completes, you can report it complete:
+
+```ruby
+ActiveSwitch.report(:weekly_mailer) # => true
+```
+
+Attempting to report on an unregistered name will raise an `ActiveSwitch::UnknownName` exception. This prevents
+dead code paths or typos of names.
+
+Statuses can be retrieved with `.all`, `.active`, or `.inactive`:
+
+```ruby
+ActiveSwitch.report(:weekly_mailer)
+
+# Returns hash of statuses with keys "big_batch_job" and "weekly_mailer"
+#
+#   {
+#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_seen_at=nil, @threshold_seconds=86400>},
+#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
+#   }
+ActiveSwitch.all
+
+# Returns hash of statuses with key "weekly_mailer"
+#
+#   {
+#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
+#   }
+ActiveSwitch.active
+
+# Returns hash of statuses with key "big_batch_job"
+#
+#   {
+#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_seen_at=nil, @threshold_seconds=86400>}
+#   }
+ActiveSwitch.inactive
+```
+
+## Redis Storage
+
+All data is stored in a single Redis hash to avoid n+1 roundtrip lookups to Redis when gathering all statuses. Care should
+be avoided to track too many switches to avoid overloading the hash. A maximum of about 1000 would be sane, and likely beyond
+typical use.
+
+The hash is stored under the key `active_switch_last_seen_ats` and reflects the following format:
+
+```ruby
+# Values are epoch seconds
+{
+  "weekly_mailer" => "1512371591",
+  "big_batch_job" => "1512285202"
+}
+```
 
 ## Development
 
