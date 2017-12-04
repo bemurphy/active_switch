@@ -20,6 +20,8 @@ Or install it yourself as:
 
 ## Usage
 
+### Configuration & Registration
+
 First, configure `ActiveSwitch`, for instance in a Rails initializer:
 
 ```ruby
@@ -37,7 +39,9 @@ ActiveSwitch.register(:weekly_mailer, 1.week)
 
 Attempting to register the same name more than once will raise an `ActiveSwitch::AlreadyRegistered` exception.
 
-Then after your scheduled task or background job completes, you can report it complete:
+### Reporting In
+
+After your scheduled task or background job completes, you can report it complete:
 
 ```ruby
 ActiveSwitch.report(:weekly_mailer) # => true
@@ -45,6 +49,8 @@ ActiveSwitch.report(:weekly_mailer) # => true
 
 Attempting to report on an unregistered name will raise an `ActiveSwitch::UnknownName` exception. This prevents
 dead code paths or typos of names.
+
+### Status Retrieval
 
 Statuses can be retrieved with `.all`, `.active`, or `.inactive`:
 
@@ -72,6 +78,13 @@ ActiveSwitch.active
 #     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_seen_at=nil, @threshold_seconds=86400>}
 #   }
 ActiveSwitch.inactive
+```
+
+Individual status may also be retrieved with `.status`
+
+```ruby
+ActiveSwitch.status(:weekly_mailer)
+# => <ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>
 ```
 
 ## Redis Storage
