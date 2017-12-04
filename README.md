@@ -87,6 +87,27 @@ ActiveSwitch.status(:weekly_mailer)
 # => <ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>
 ```
 
+### Status instances
+
+A status instance can be asked for its values:
+
+```ruby
+status = ActiveSwitch.status(:weekly_mailer)
+status.name #=> "weekly_mailer"
+status.last_seen_at #=> 2017-12-03 23:02:42 -0800
+status.threshold_seconds #=> 604800
+```
+
+It can also be checked if active or inactive:
+
+```ruby
+status.active? #=> true
+status.inactive? #=> false
+status.state #=> "ACTIVE"
+```
+
+A status is considered active if it was last reported within its registered threshold seconds.
+
 ## Redis Storage
 
 All data is stored in a single Redis hash to avoid n+1 roundtrip lookups to Redis when gathering all statuses. Care should
