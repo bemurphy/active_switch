@@ -11,16 +11,16 @@ module ActiveSwitch
       @threshold_seconds = threshold_seconds.to_i
     end
 
-    def state
-      active? ? ACTIVE : INACTIVE
-    end
-
     def active?
-      (cast_timestamp(last_seen_at) + threshold_seconds) >= cast_timestamp(now)
+      (cast_timestamp(last_seen_at) + threshold_seconds) > cast_timestamp(now)
     end
 
     def inactive?
       !active?
+    end
+
+    def state
+      active? ? ACTIVE : INACTIVE
     end
 
     private
