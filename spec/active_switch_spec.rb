@@ -31,6 +31,12 @@ RSpec.describe ActiveSwitch do
       ActiveSwitch.report(:foo)
       expect(redis.hget(storage_key, :foo).to_i).to be_within(1).of(Time.now.to_i)
     end
+
+    it "can execute a block when given" do
+      rtn = ActiveSwitch.report(:foo) { 2 + 2 }
+      expect(rtn).to eq(4)
+      expect(redis.hget(storage_key, :foo).to_i).to be_within(1).of(Time.now.to_i)
+    end
   end
 
   describe ".status" do

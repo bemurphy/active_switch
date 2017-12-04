@@ -50,6 +50,12 @@ ActiveSwitch.report(:weekly_mailer) # => true
 Attempting to report on an unregistered name will raise an `ActiveSwitch::UnknownName` exception. This prevents
 dead code paths or typos of names.
 
+Alternatively, you can provide `.report` a block to yield:
+
+```ruby
+ActiveSwitch.report(:weekly_mailer) { 2 + 2 } # => 4
+```
+
 ### Status Retrieval
 
 Statuses can be retrieved with `.all`, `.active`, or `.inactive`:

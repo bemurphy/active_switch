@@ -31,8 +31,13 @@ module ActiveSwitch
 
   def report(name)
     name = cast_name(name)
-    redis.hset(STORAGE_KEY, name, Time.now.to_i)
-    true
+
+    if block_given?
+      yield.tap { mark_reported(name) }
+    else
+      mark_reported(name)
+      true
+    end
   end
 
   def status(name)
@@ -57,6 +62,12 @@ module ActiveSwitch
 
   def inactive
     all.select { |_, s| s.inactive? }
+  end
+
+  # Considered private API
+
+  def mark_reported(name)
+    redis.hset(STORAGE_KEY, name, Time.now.to_i)
   end
 
   def cast_name(name)
