@@ -1,4 +1,5 @@
 require "active_switch/version"
+require "active_switch/status"
 
 module ActiveSwitch
   extend self
