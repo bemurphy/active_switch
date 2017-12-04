@@ -1,6 +1,6 @@
 # ActiveSwitch
 
-ActiveSwitch stores last seen at timestamps in Redis so you can detect if cron style jobs are running at an expected interval.
+ActiveSwitch stores last reported at timestamps in Redis so you can detect if cron style jobs are running at an expected interval.
 
 ## Installation
 
@@ -60,22 +60,22 @@ ActiveSwitch.report(:weekly_mailer)
 # Returns hash of statuses with keys "big_batch_job" and "weekly_mailer"
 #
 #   {
-#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_seen_at=nil, @threshold_seconds=86400>},
-#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
+#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_reported_at=nil, @threshold_seconds=86400>},
+#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_reported_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
 #   }
 ActiveSwitch.all
 
 # Returns hash of statuses with key "weekly_mailer"
 #
 #   {
-#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
+#     "weekly_mailer"=>#<ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_reported_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>}
 #   }
 ActiveSwitch.active
 
 # Returns hash of statuses with key "big_batch_job"
 #
 #   {
-#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_seen_at=nil, @threshold_seconds=86400>}
+#     "big_batch_job"=>#<ActiveSwitch::Status:0x007fbb9309e880 @name="big_batch_job", @last_reported_at=nil, @threshold_seconds=86400>}
 #   }
 ActiveSwitch.inactive
 ```
@@ -84,7 +84,7 @@ Individual status may also be retrieved with `.status`
 
 ```ruby
 ActiveSwitch.status(:weekly_mailer)
-# => <ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_seen_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>
+# => <ActiveSwitch::Status:0x007fbb9309f990 @name="weekly_mailer", @last_reported_at=2017-12-03 23:02:42 -0800, @threshold_seconds=604800>
 ```
 
 ### Status instances
@@ -94,7 +94,7 @@ A status instance can be asked for its values:
 ```ruby
 status = ActiveSwitch.status(:weekly_mailer)
 status.name #=> "weekly_mailer"
-status.last_seen_at #=> 2017-12-03 23:02:42 -0800
+status.last_reported_at #=> 2017-12-03 23:02:42 -0800
 status.threshold_seconds #=> 604800
 ```
 
@@ -114,7 +114,7 @@ All data is stored in a single Redis hash to avoid n+1 roundtrip lookups to Redi
 be taken to avoid tracking too many switches to avoid overloading the hash. A maximum of about 1000 would be sane, and likely
 beyond typical use.
 
-The hash is stored under the key `active_switch_last_seen_ats` and reflects the following format:
+The hash is stored under the key `active_switch_last_reported_ats` and reflects the following format:
 
 ```ruby
 # Values are epoch seconds

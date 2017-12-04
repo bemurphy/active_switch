@@ -3,16 +3,16 @@ module ActiveSwitch
     ACTIVE   = "ACTIVE".freeze
     INACTIVE = "INACTIVE".freeze
 
-    attr_reader :name, :last_seen_at, :threshold_seconds
+    attr_reader :name, :last_reported_at, :threshold_seconds
 
-    def initialize(name:, last_seen_at:, threshold_seconds:)
+    def initialize(name:, last_reported_at:, threshold_seconds:)
       @name              = name.to_s
-      @last_seen_at      = cast_timestamp(last_seen_at, cast_null: false)
+      @last_reported_at  = cast_timestamp(last_reported_at, cast_null: false)
       @threshold_seconds = threshold_seconds.to_i
     end
 
     def active?
-      (cast_timestamp(last_seen_at) + threshold_seconds) > cast_timestamp(now)
+      (cast_timestamp(last_reported_at) + threshold_seconds) > cast_timestamp(now)
     end
 
     def inactive?

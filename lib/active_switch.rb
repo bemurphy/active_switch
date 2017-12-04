@@ -8,7 +8,7 @@ module ActiveSwitch
   AlreadyRegistered = Class.new(ArgumentError)
   UnknownName       = Class.new(ArgumentError)
 
-  STORAGE_KEY   = "active_switch_last_seen_ats".freeze
+  STORAGE_KEY   = "active_switch_last_reported_ats".freeze
   REGISTRATIONS = {}
 
   class << self
@@ -39,14 +39,14 @@ module ActiveSwitch
     name = cast_name(name)
     ts   = redis.hget(STORAGE_KEY, name)
 
-    Status.new(name: name, last_seen_at: ts, threshold_seconds: REGISTRATIONS[name])
+    Status.new(name: name, last_reported_at: ts, threshold_seconds: REGISTRATIONS[name])
   end
 
   def all
     data = redis.hgetall(STORAGE_KEY)
 
     REGISTRATIONS.each_with_object({}) do |(name, threshold_seconds), obj|
-      obj[name] = Status.new(name: name, last_seen_at: data[name],
+      obj[name] = Status.new(name: name, last_reported_at: data[name],
                              threshold_seconds: threshold_seconds)
     end
   end

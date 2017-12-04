@@ -41,10 +41,10 @@ RSpec.describe ActiveSwitch do
       expect(status).to be_a(ActiveSwitch::Status)
       expect(status.name).to eq("foo")
       expect(status.threshold_seconds).to eq(10)
-      expect(status.last_seen_at).to eq(Time.at(42))
+      expect(status.last_reported_at).to eq(Time.at(42))
     end
 
-    it "can return a status when no last seen at is set" do
+    it "can return a status when no last reported at is set" do
       status = ActiveSwitch.status(:foo)
       expect(status).to be_a(ActiveSwitch::Status)
     end
