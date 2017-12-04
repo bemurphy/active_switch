@@ -111,8 +111,8 @@ A status is considered active if it was last reported within its registered thre
 ## Redis Storage
 
 All data is stored in a single Redis hash to avoid n+1 roundtrip lookups to Redis when gathering all statuses. Care should
-be avoided to track too many switches to avoid overloading the hash. A maximum of about 1000 would be sane, and likely beyond
-typical use.
+be taken to avoid tracking too many switches to avoid overloading the hash. A maximum of about 1000 would be sane, and likely
+beyond typical use.
 
 The hash is stored under the key `active_switch_last_seen_ats` and reflects the following format:
 
