@@ -24,6 +24,17 @@ RSpec.describe ActiveSwitch do
         ActiveSwitch.register(:foo, 10)
       }.to raise_error(ActiveSwitch::AlreadyRegistered)
     end
+
+    it "can receive a hash of names and thresholds" do
+      ActiveSwitch.test_reset
+
+      ActiveSwitch.register({
+        fizz: 11,
+        "buzz" => 22,
+      })
+
+      expect(ActiveSwitch::REGISTRATIONS).to eq("fizz" => 11, "buzz" => 22)
+    end
   end
 
   describe ".report" do

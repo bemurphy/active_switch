@@ -39,6 +39,15 @@ ActiveSwitch.register(:weekly_mailer, 1.week)
 
 Attempting to register the same name more than once will raise an `ActiveSwitch::AlreadyRegistered` exception.
 
+Alternatively, you can register in one call with a hash:
+
+```ruby
+ActiveSwitch.register({
+  big_batch_job: 1.day,
+  weekly_mailer: 1.week
+})
+```
+
 ### Reporting In
 
 After your scheduled task or background job completes, you can report it complete:

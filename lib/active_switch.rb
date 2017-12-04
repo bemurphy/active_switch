@@ -19,13 +19,17 @@ module ActiveSwitch
     end
   end
 
-  def register(name, threshold_seconds)
-    name = name.to_s
-
-    if REGISTRATIONS[name]
-      raise AlreadyRegistered, "#{name} already registered"
+  def register(*args)
+    if args[0].is_a?(Hash)
+      args[0].each { |name, threshold_seconds| register(name, threshold_seconds) }
     else
-      REGISTRATIONS[name] = threshold_seconds
+      name, threshold_seconds = args[0].to_s, args[1]
+
+      if REGISTRATIONS[name]
+        raise AlreadyRegistered, "#{name} already registered"
+      else
+        REGISTRATIONS[name] = threshold_seconds
+      end
     end
   end
 
