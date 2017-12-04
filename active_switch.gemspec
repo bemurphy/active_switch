@@ -31,4 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "mock_redis"
+
+  # Redis is added as a development dependency and expects the parent application to set the dependency
+  spec.add_development_dependency "redis"
 end
