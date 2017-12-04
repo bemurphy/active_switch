@@ -58,6 +58,13 @@ RSpec.describe ActiveSwitch::Status do
     expect(status.state).to eq("ACTIVE")
   end
 
+  it "aliases #to_s to state" do
+    status = ActiveSwitch::Status.new(name: :spec_name, last_seen_at: Time.now - 58,
+                                      threshold_seconds: 60)
+
+    expect(status.to_s).to eq("ACTIVE")
+  end
+
   it "has a state of INACTIVE when inactive" do
     status = ActiveSwitch::Status.new(name: :spec_name, last_seen_at: Time.now - 61,
                                       threshold_seconds: 60)

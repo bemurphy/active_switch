@@ -22,6 +22,7 @@ module ActiveSwitch
     def state
       active? ? ACTIVE : INACTIVE
     end
+    alias_method :to_s, :state
 
     private
 
