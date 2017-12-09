@@ -96,9 +96,11 @@ RSpec.describe ActiveSwitch do
 
   describe ".report_on_inactive" do
     it "reports on inactive statuses to aid initial deployments" do
-      ActiveSwitch.report(:foo)
+      foo_epoch_seconds = Time.now.to_i - 5
+      redis.hset(storage_key, :foo, foo_epoch_seconds)
       ActiveSwitch.report_on_inactive
       expect(ActiveSwitch.inactive).to eq({})
+      expect(ActiveSwitch.status(:foo).last_reported_at.to_i).to eq(foo_epoch_seconds)
     end
   end
 end
