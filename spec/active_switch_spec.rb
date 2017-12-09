@@ -93,4 +93,12 @@ RSpec.describe ActiveSwitch do
       expect(statuses["bar"].name).to eq("bar")
     end
   end
+
+  describe ".report_on_inactive" do
+    it "reports on inactive statuses to aid initial deployments" do
+      ActiveSwitch.report(:foo)
+      ActiveSwitch.report_on_inactive
+      expect(ActiveSwitch.inactive).to eq({})
+    end
+  end
 end

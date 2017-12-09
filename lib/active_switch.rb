@@ -68,6 +68,10 @@ module ActiveSwitch
     all.select { |_, s| s.inactive? }
   end
 
+  def report_on_inactive
+    inactive.keys.map { |name| report(name) }
+  end
+
   # Considered private API
 
   def mark_reported(name)
